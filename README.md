@@ -1,4 +1,4 @@
-# hydro-learn: *An intelligent package for solving hydrogeology engineering issues*
+# hydro-learn: *An intelligent solver for hydrogeology engineering issues*
 
 
 ##  Overview
