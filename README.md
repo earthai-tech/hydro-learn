@@ -4,23 +4,23 @@
 ##  Overview
 
 *Hydro-learn* is a Python-based package for solving hydro-geology engineering issues. From methodologies based on 
-Machine Learning,It brings novel approaches  for reducing numerous losses during the hydrogeological  
+Machine Learning, It brings novel approaches  for reducing numerous losses during the hydrogeological  
 exploration projects. It allows to: 
-- reduce the cost of permeability coefficient (k) data collection during the engineering projects,
+- reduce the cost of hydraulic conductivity (K) data collection during the engineering projects,
 - Guide drillers for to locating the drilling operations, 
 - predict the water content in the well such as the level of water inrush, ...
 
 ## Licence 
 
-*WATex* is under [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause) License. 
+*hydro-learn* is under [BSD-3-Clause](https://opensource.org/licenses/BSD-3-Clause) License. 
 
 ## Installation 
 
 The system requires preferably Python 3.10+. 
 
-## Demos 
+## Demo 
 
-### Predict permeability coefficient ``K`` from logging dataset using MXS approach
+### Predict hydraulic conductivity ``K`` from logging dataset using MXS approach
  
 MXS stands for mixture learning strategy. It uses upstream unsupervised learning for 
 ``k`` -aquifer similarity label prediction and the supervising learning for 
@@ -52,8 +52,6 @@ Out[4]: array([1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2])
 ymxs[62:74]
 Out[5]: array([ 0,  0,  0,  0, 12, 12, 12, 12, 12, 12, 12, 12])
 ```
-To understand the transformation from NGA to MXS target (``ymxs``), please, have a look 
-of the following [paper](http://dx.doi.org/10.2139/ssrn.4326365).
 Once the MXS target is predicted, we call the ``make_naive_pipe`` function to 
 impute, scale, and transform the predictor ``X`` at once into a compressed sparse 
 matrix ready for final prediction using the [support vector machines](https://ieeexplore.ieee.org/document/708428) and 
@@ -78,8 +76,7 @@ Out[8]: 0.9636363636363636
 ```
 As we can see, the results of ``k`` prediction are quite satisfactory for our 
 toy example using only two boreholes data. Note that things can become more 
-interesting when using many boreholes data. For more in 
-depth, visit our [examples page](https://watex.readthedocs.io/en/latest/glr_examples/index.html). 
+interesting when using many boreholes data. 
 
 
 ## Contributions 

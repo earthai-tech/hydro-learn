@@ -106,7 +106,7 @@ def read_data (
         load text file.  
     np.load 
        Load uncompressed or compressed numpy `.npy` and `.npz` formats. 
-    watex.utils.baseutils.save_or_load: 
+    hlearn.utils.baseutils.save_or_load: 
         Save or load numpy arrays.
        
     """
@@ -285,7 +285,7 @@ def array2hdf5 (
     Examples 
     ----------
     >>> import numpy as np 
-    >>> from watex.utils.baseutils import array2hdf5
+    >>> from hlearn.utils.baseutils import array2hdf5
     >>> data = np.random.randn (100, 27 ) 
     >>> array2hdf5 ('test.h5', data   )
     >>> load_data = array2hdf5 ( 'test.h5', data, task ='load')
@@ -329,7 +329,7 @@ def lowertify (*values, strip = True, return_origin: bool =... ):
     :return: value in lowercase and original value. 
     
     :Example: 
-        >>> from watex.utils.baseutils import lowertify 
+        >>> from hlearn.utils.baseutils import lowertify 
         >>> lowertify ( 'KIND')
         Out[19]: ('kind',)
         >>> lowertify ( "KIND", return_origin =True )
@@ -409,7 +409,7 @@ def save_or_load(
     Examples 
     ----------
     >>> import numpy as np 
-    >>> from watex.utils.baseutils import save_or_load 
+    >>> from hlearn.utils.baseutils import save_or_load 
     >>> data = np.random.randn (2, 7)
     >>> # save to txt 
     >>> save_or_load ( "test.txt" , data)
@@ -535,8 +535,8 @@ def get_remote_data(
     rfile: str or PathLike-object 
        Full path to the remote file. It can be the path to the repository 
        root toward the file name. For instance, to retrieve the file 
-       ``'AGSO.csv'`` which is located in ``watex/etc/`` directory then the 
-       full path should be ``'watex/etc/AGSO.csv'``
+       ``'AGSO.csv'`` which is located in ``hlearn/etc/`` directory then the 
+       full path should be ``'hlearn/etc/AGSO.csv'``
         
     savepath: str, optional 
        Full path to place where to downloaded files should be located. 
