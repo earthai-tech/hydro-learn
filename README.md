@@ -23,10 +23,10 @@ The system requires preferably Python 3.10+.
 ### Predict hydraulic conductivity ``K`` from logging dataset using MXS approach
  
 MXS stands for mixture learning strategy. It uses upstream unsupervised learning for 
-``k`` -aquifer similarity label prediction and the supervising learning for 
-final ``k``-value prediction. For our toy example, we use two boreholes data 
+``K`` -aquifer similarity label prediction and the supervising learning for 
+final ``K``-value prediction. For our toy example, we use two boreholes data 
 stored in the software and merge them to compose a unique dataset. In addition, we dropped the 
-``remark`` observation which is subjective data not useful for ``k`` prediction as:
+``remark`` observation which is subjective data not useful for ``K`` prediction as:
 
 ```python
 
@@ -39,7 +39,7 @@ Out[3]: Index(['hole_id', 'depth_top', 'depth_bottom', 'strata_name', 'rock_name
           dtype='object')
 hdata = h.frame 
 ```
-``k`` is collected as continue values (m/darcies) and should be categorized for the 
+``K`` is collected as continue values (m/darcies) and should be categorized for the 
 naive group of aquifer prediction (NGA). The latter is used to predict 
 upstream the  MXS target ``ymxs``.  Here, we used the default categorization 
 provided by the software and we assume that in the area, there are at least ``2`` 
@@ -69,14 +69,14 @@ Xtrain, Xtest, ytrain, ytest = hlearn.sklearn.train_test_split (Xtransf, ymxs )
 ypred_k_svc= hlearn.sklearn.SVC().fit(Xtrain, ytrain).predict(Xtest)
 ypred_k_rf = hlearn.sklearn.RandomForestClassifier ().fit(Xtrain, ytrain).predict(Xtest)
 ```
-We can now check the ``k`` prediction scores using ``accuracy_score`` function as: 
+We can now check the ``K`` prediction scores using ``accuracy_score`` function as: 
 ```python 
 hlearn.sklearn.accuracy_score (ytest, ypred_k_svc)
 Out[7]: 0.9272727272727272
 hlearn.sklearn.accuracy_score (ytest, ypred_k_rf)
 Out[8]: 0.9636363636363636
 ```
-As we can see, the results of ``k`` prediction are quite satisfactory for our 
+As we can see, the results of ``K`` prediction are quite satisfactory for our 
 toy example using only two boreholes data. Note that things can become more 
 interesting when using many boreholes data. 
 
@@ -85,6 +85,6 @@ interesting when using many boreholes data.
 
 1. Department of Geophysics, School of Geosciences & Info-physics, [Central South University](https://en.csu.edu.cn/), China.
 2. Hunan Key Laboratory of Nonferrous Resources and Geological Hazards Exploration Changsha, Hunan, China
-3. Laboratoire de Geologie Ressources Minerales et Energetiques, UFR des Sciences de la Terre et des Ressources Mini�res, [Universit� F�lix Houphou�t-Boigny]( https://www.univ-fhb.edu.ci/index.php/ufr-strm/), Cote d'Ivoire.
+3. Laboratoire de Geologie Ressources Minerales et Energetiques, UFR des Sciences de la Terre et des Ressources Mini�res, [Universite Felix Houphouet-Boigny]( https://www.univ-fhb.edu.ci/index.php/ufr-strm/), Cote d'Ivoire.
 
 Developer: [_L. Kouadio_](https://wegeophysics.github.io/) <<etanoyau@gmail.com>>
