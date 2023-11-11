@@ -14,7 +14,7 @@ from pathlib import Path
 from importlib import resources
 from collections import namedtuple
 from ..utils.box import Boxspace 
-from ..utils.coreutils import _is_readable 
+from ..utils.baseutils import _is_readable 
 from ..utils.funcutils import random_state_validator , is_iterable
 
 DMODULE = "watex.datasets.data" ; DESCR = "watex.datasets.descr"

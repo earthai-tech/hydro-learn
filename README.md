@@ -7,7 +7,7 @@
 Machine Learning, It brings novel approaches  for reducing numerous losses during the hydrogeological  
 exploration projects. It allows to: 
 - reduce the cost of hydraulic conductivity (K) data collection during the engineering projects,
-- Guide drillers for to locating the drilling operations, 
+- guide drillers for to locating the drilling operations, 
 - predict the water content in the well such as the level of water inrush, ...
 
 ## Licence 
@@ -45,7 +45,8 @@ upstream the  MXS target ``ymxs``.  Here, we used the default categorization
 provided by the software and we assume that in the area, there are at least ``2`` 
 groups of the aquifer. The code is given as: 
 ```python 
-mxs = hlearn.MXS (kname ='k', n_groups =2).fit(hdata) 
+from hlearn.api import MXS
+mxs = MXS (kname ='k', n_groups =2).fit(hdata) 
 ymxs=mxs.predictNGA().makeyMXS(categorize_k=True, default_func=True)
 mxs.yNGA_ [62:74]
 Out[4]: array([1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2])
@@ -58,7 +59,8 @@ matrix ready for final prediction using the [support vector machines](https://ie
 [random forest](https://www.ibm.com/topics/random-forest) as examples. Here we go: 
 ```python 
 X= hdata [h.feature_names]
-Xtransf = hlearn.make_naive_pipe (X, transform=True) 
+from hlearn.utils.mlutils import make_naive_pipe
+Xtransf = make_naive_pipe (X, transform=True) 
 Xtransf 
 Out[6]: 
 <218x46 sparse matrix of type '<class 'numpy.float64'>'

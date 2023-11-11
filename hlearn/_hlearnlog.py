@@ -4,8 +4,8 @@
 #   Created on Tue May 18 12:53:48 2021
 
 """
-`WATex`_ Logger 
-================
+`Hydro-learn`_ Logger 
+=======================
 
 Module to track bugs and issues, and also deal with all exceptions in 
 :mod:`~.exceptions`.

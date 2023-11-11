@@ -433,7 +433,7 @@ class MXS (HData):
         """
         self.inspect 
         
-        from ..analysis.dimensionality import nPCA 
+        from .analysis import nPCA 
         from ..utils.mlutils import ( 
             naive_imputer, 
             naive_scaler 

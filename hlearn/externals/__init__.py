@@ -79,11 +79,6 @@ from .sklearn import (
         _HAS_ENSEMBLE_
         )
 
-from .gbm import ( 
-    xgboost, 
-    xgboostdoc, 
-    XGBClassifier 
-    )
 
 __all__=[
     "BaseEstimator",
@@ -156,7 +151,4 @@ __all__=[
     'skl_ensemble_', 
     'sklearndoc', 
     '_HAS_ENSEMBLE_',
-    'xgboost', 
-    'xgboostdoc', 
-    'XGBClassifier'
     ]

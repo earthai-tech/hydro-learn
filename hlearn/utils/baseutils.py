@@ -21,6 +21,10 @@ from .._typing import (
     List, 
     NDArray, 
     DataFrame, 
+    Tuple,
+    Optional,
+    ArrayLike, 
+    DType, 
     )
 from .funcutils import ( 
     is_iterable, 
@@ -28,6 +32,18 @@ from .funcutils import (
     smart_format,
     sPath, 
     to_numeric_dtypes, 
+    _assert_all_types, 
+
+    )
+from .gistools import ( 
+    HAS_GDAL, 
+    convert_position_float2str, 
+    project_point_utm2ll, 
+    convert_position_str2float, 
+    assert_lat_value, 
+    assert_lon_value, 
+    utm_to_ll, 
+    
     )
 from ..property import Config
 from ._dependency import ( 
@@ -614,7 +630,201 @@ def get_remote_data(
     
     return status
       
+def makeCoords(
+  reflong: str | Tuple[float], 
+  reflat: str | Tuple[float], 
+  nsites: int ,  
+  *,  
+  r: int =45.,
+  utm_zone: Optional[str] =None,   
+  step: Optional[str|float] ='1km', 
+  order: str = '+', 
+  todms: bool =False, 
+  is_utm: bool  =False,
+  raise_warning: bool=True, 
+  **kws
+)-> Tuple[ArrayLike[DType[float]]]: 
+    """ Generate multiple stations coordinates (longitudes, latitudes)
+    from a reference station/site.
     
+    One degree of latitude equals approximately 364,000 feet (69 miles), 
+    one minute equals 6,068 feet (1.15 miles), and one-second equals 101 feet.
+    One-degree of longitude equals 288,200 feet (54.6 miles), one minute equals
+    4,800 feet (0.91 mile) , and one second equals 80 feet. Illustration showing
+    longitude convergence. (1 feet ~=0.3048 meter)
+    
+    Parameters 
+    ----------
+    reflong: float or string or list of [start, stop]
+        Reference longitude  in degree decimal or in DD:MM:SS for the first 
+        site considered as the origin of the landmark.
+        
+    reflat: float or string or list of [start, stop]
+        Reference latitude in degree decimal or in DD:MM:SS for the reference  
+        site considered as the landmark origin. If value is given in a list, 
+        it can contain the start point and the stop point. 
+        
+    nsites: int or float 
+        Number of site to generate the coordinates onto. 
+        
+    r: float or int 
+        The rotate angle in degrees. Rotate the angle features the direction
+        of the projection line. Default value is ``45`` degrees. 
+        
+    step: float or str 
+        Offset or the distance of seperation between different sites in meters. 
+        If the value is given as string type, except the ``km``, it should be 
+        considered as a ``m`` value. Only meters and kilometers are accepables.
+        
+    order: str 
+        Direction of the projection line. By default the projected line is 
+        in ascending order i.e. from SW to NE with angle `r` set to ``45``
+        degrees. Could be ``-`` for descending order. Any other value should 
+        be in ascending order. 
+    
+    is_utm: bool, 
+        Consider the first two positional arguments as UTM coordinate values. 
+        This is an alternative way to assume `reflong` and `reflat` are UTM 
+        coordinates 'easting'and 'northing` by default. If `utm2deg` is ``False``, 
+        any value greater than 180 degrees for longitude and 90 degrees for 
+        latitude will raise an error. Default is ``False``.
+        
+    utm_zone: string (##N or ##S)
+        utm zone in the form of number and North or South hemisphere, 10S or 03N
+        Must be given if `utm2deg` is set to ``True``. 
+                      
+    todms: bool 
+        Convert the degree decimal values into the DD:MM:SS. Default is ``False``. 
+        
+    raise_warning: bool, default=True, 
+        Raises warnings if GDAL is not set or the coordinates accurately status.
+    
+    kws: dict, 
+        Additional keywords of :func:`.gistools.project_point_utm2ll`. 
+        
+    Returns 
+    -------
+        Tuple of  generated projected coordinates longitudes and latitudes
+        either in degree decimals or DD:MM:SS
+        
+    Notes 
+    ------
+    The distances vary. A degree, minute, or second of latitude remains 
+    fairly constant from the equator to the poles; however a degree, minute,
+    or second of longitude can vary greatly as one approaches the poles
+    and the meridians converge.
+        
+    References 
+    ----------
+    https://math.answers.com/Q/How_do_you_convert_degrees_to_meters
+    
+    Examples 
+    --------
+    >>> from watex.utils.coreutils import makeCoords 
+    >>> rlons, rlats = makeCoords('110:29:09.00', '26:03:05.00', 
+    ...                                     nsites = 7, todms=True)
+    >>> rlons
+    ... array(['110:29:09.00', '110:29:35.77', '110:30:02.54', '110:30:29.30',
+           '110:30:56.07', '110:31:22.84', '110:31:49.61'], dtype='<U12')
+    >>> rlats 
+    ... array(['26:03:05.00', '26:03:38.81', '26:04:12.62', '26:04:46.43',
+           '26:05:20.23', '26:05:54.04', '26:06:27.85'], dtype='<U11')
+    >>> rlons, rlats = makeCoords ((116.7, 119.90) , (44.2 , 40.95),
+                                            nsites = 238, step =20. ,
+                                            order = '-', r= 125)
+    >>> rlons 
+    ... array(['119:54:00.00', '119:53:11.39', '119:52:22.78', '119:51:34.18',
+           '119:50:45.57', '119:49:56.96', '119:49:08.35', '119:48:19.75',
+           ...
+           '116:46:03.04', '116:45:14.43', '116:44:25.82', '116:43:37.22',
+           '116:42:48.61', '116:42:00.00'], dtype='<U12')
+    >>> rlats 
+    ... array(['40:57:00.00', '40:57:49.37', '40:58:38.73', '40:59:28.10',
+           '41:00:17.47', '41:01:06.84', '41:01:56.20', '41:02:45.57',
+           ...
+       '44:07:53.16', '44:08:42.53', '44:09:31.90', '44:10:21.27',
+       '44:11:10.63', '44:12:00.00'], dtype='<U11')
+    
+    """  
+    def assert_ll(coord):
+        """ Assert coordinate when the type of the value is string."""
+        try: coord= float(coord)
+        except ValueError: 
+            if ':' not in coord: 
+                raise ValueError(f'Could not convert value to float: {coord!r}')
+            else : 
+                coord = convert_position_str2float(coord)
+        return coord
+    
+    xinf, yinf = None, None 
+    
+    nsites = int(_assert_all_types(nsites,int, float)) 
+    if isinstance (reflong, (list, tuple, np.ndarray)): 
+        reflong , xinf, *_ = reflong 
+    if isinstance (reflat, (list, tuple, np.ndarray)): 
+        reflat , yinf, *_ = reflat 
+    step=str(step).lower() 
+    if step.find('km')>=0: # convert to meter 
+        step = float(step.replace('km', '')) *1e3 
+    elif step.find('m')>=0: step = float(step.replace('m', '')) 
+    step = float(step) # for consistency 
+    
+    if str(order).lower() in ('descending', 'down', '-'): order = '-'
+    else: order ='+'
+    # compute length of line using the reflong and reflat
+    # the origin of the landmark is x0, y0= reflong, reflat
+    x0= assert_ll(reflong) if is_utm else assert_ll(
+        assert_lon_value(reflong))
+    y0= assert_ll(reflat) if is_utm else assert_ll(
+        assert_lat_value(reflat))
+    
+    xinf = xinf or x0  + (np.sin(np.deg2rad(r)) * step * nsites
+                          ) / (364e3 *.3048) 
+    yinf = yinf or y0 + (np.cos(np.deg2rad(r)) * step * nsites
+                         ) /(2882e2 *.3048)
+    
+    reflon_ar = np.linspace(x0 , xinf, nsites ) 
+    reflat_ar = np.linspace(y0, yinf, nsites)
+    #--------------------------------------------------------------------------
+    # r0 = np.sqrt(((x0-xinf)*364e3 *.3048)**2 + ((y0 -yinf)*2882e2 *.3048)**2)
+    # print('recover distance = ', r0/nsites )
+    #--------------------------------------------------------------------------
+    if is_utm : 
+        if utm_zone is None: 
+            raise TypeError("Please provide your UTM zone e.g.'10S' or '03N' !")
+        lon = np.zeros_like(reflon_ar) 
+        lat = lon.copy() 
+        
+        for kk , (lo, la) in enumerate (zip( reflon_ar, reflat_ar)): 
+            try : 
+                with warnings.catch_warnings(): # ignore multiple warnings 
+                    warnings.simplefilter('ignore')
+                    lat[kk], lon[kk] = project_point_utm2ll(
+                        easting= la, northing=lo, utm_zone=utm_zone, **kws)
+            except : 
+                lat[kk], lon[kk] = utm_to_ll(
+                    23, northing=lo, easting=la, zone=utm_zone)
+                
+        if not HAS_GDAL : 
+            if raise_warning:
+                warnings.warn("It seems GDAL is not set! will use the equations"
+                              " from USGS Bulletin 1532. Be aware, the positionning" 
+                              " is less accurate than using GDAL.")
+        
+        if raise_warning:
+            warnings.warn("By default,'easting/northing' are assumed to"
+                          " fit the 'longitude/latitude' respectively.") 
+        
+        reflat_ar, reflon_ar = lat , lon 
+    
+    if todms:
+       reflat_ar = np.array(list(
+           map(lambda l: convert_position_float2str(float(l)), reflat_ar)))
+       reflon_ar = np.array(list(
+           map(lambda l: convert_position_float2str(float(l)), reflon_ar)))
+       
+    return (reflon_ar , reflat_ar ) if order =='+' else (
+        reflon_ar[::-1] , reflat_ar[::-1] )      
     
     
     
