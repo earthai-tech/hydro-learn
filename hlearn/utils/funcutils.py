@@ -53,7 +53,7 @@ from ..exceptions import (
     ParameterNumberError, 
     )
 from ._dependency import import_optional_dependency
-_logger = hlearnlog.get_hlearn_logger()(__name__)
+_logger = hlearnlog.get_hlearn_logger(__name__)
 
 _msg= ''.join([
     'Note: need scipy version 0.14.0 or higher or interpolation,',

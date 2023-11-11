@@ -12,13 +12,12 @@ import pandas as pd
 
 from .core import GeoBase 
 from .geology import Geology
-from .stratigraphic import GeoStrataModel 
 from .._typing import Any, NDArray, DataFrame
 from ..decorators import export_data 
 from ..exceptions import NotFittedError, DrillError
 from ..site import Profile, Location 
 from ..utils.box import Boxspace, data2Box 
-from ..utils.coreutils import _is_readable, makeCoords 
+from ..utils.baseutils import _is_readable, makeCoords 
 from ..utils.exmath import get_azimuth 
 from ..utils.funcutils import ( 
     _assert_all_types, 
@@ -1115,7 +1114,7 @@ class DSBorehole:
         """
         self.inspect 
         # use default columns [electrical, _description] properties 
-        e_props, strata = GeoStrataModel._getProperties() 
+        e_props, strata = GeoBase.getProperties() 
         # compute the mean with electrical properties 
         if add_electrical_properties: 
             e_props = list (map ( lambda x : np.mean ( x ) if hasattr (

@@ -429,7 +429,7 @@ def predict_NGA_labels(
        MGA and clusters centers if ``return_cluster_centers` is 
        set to ``True``. 
     """
-    from ..exlib.sklearn import KMeans 
+    from ..externals.sklearn import KMeans 
     #xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
     ko= KMeans(n_clusters= n_clusters, random_state = random_state , 
                   init="random", n_init=n_init , **kws

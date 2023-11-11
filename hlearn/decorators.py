@@ -26,7 +26,7 @@ from ._typing import (
     T,
     F
 )
-from ._hlearn import hlearnlog
+from ._hlearnlog import hlearnlog
 _logger = hlearnlog.get_hlearn_logger(__name__)
 
 __docformat__='restructuredtext'

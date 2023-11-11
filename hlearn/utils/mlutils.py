@@ -45,7 +45,8 @@ from ..exceptions import (
     EstimatorError, 
     DatasetError
 )
-from ..exlib.sklearn import ( 
+
+from ..externals.sklearn import ( 
     train_test_split , 
     StratifiedShuffleSplit, 
     accuracy_score,
@@ -69,7 +70,7 @@ from ..exlib.sklearn import (
     Pipeline, 
     FeatureUnion, 
     OneHotEncoder, 
-    RobustScaler
+    RobustScaler, 
 )
 from .funcutils import (
     _assert_all_types, 
@@ -82,6 +83,8 @@ from .funcutils import (
     to_numeric_dtypes, 
     ellipsis2false, 
 )
+from .kit import DataFrameSelector
+
 from .validator import ( 
     get_estimator_name , 
     check_array, 
@@ -2850,9 +2853,7 @@ def make_naive_pipe(
     	with 2172 stored elements in Compressed Sparse Row format>
 
     """
-    
-    from ..transformers import DataFrameSelector
-    
+
     sc= {"StandardScaler": StandardScaler ,"MinMaxScaler": MinMaxScaler , 
          "Normalizer":Normalizer , "RobustScaler":RobustScaler}
 
@@ -2923,7 +2924,7 @@ def make_naive_pipe(
             raise ValueError (msg.format(name ))
     # make pipe 
     npipe = [
-            ('imputerObj',SimpleImputer(missing_values=missing_values , 
+            ('imputerObj', SimpleImputer(missing_values=missing_values , 
                                     strategy=impute_strategy)),                
             ('scalerObj', scaler() if callable (scaler) else scaler ), 
             ]
@@ -3589,7 +3590,7 @@ def naive_scaler(
         X_sc = pd.DataFrame( X_sc , columns = sc.feature_names_in_)  
     return X_sc 
 
-    
+
 
 
 

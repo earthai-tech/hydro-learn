@@ -28,6 +28,8 @@ from .._hlearnlog import hlearnlog
 _logger =hlearnlog().get_hlearn_logger(__name__)
 
 
+__all= ["Structural", "Structures"]
+
 def setstructures(self , configfile:str =None , fillna:int =0  ): 
     """ configure the geological structures as a property object and load 
     attributes.  

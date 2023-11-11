@@ -57,10 +57,10 @@ except NameError:
 if __HLEARN_SETUP__ :
     sys.stderr.write("Partial import of hlearn during the build process.\n")
 else:
-    from . import _distributor_init  # noqa: F401
-    from . import _build  # noqa: F401
+    #from . import _distributor_init  # noqa: F401
+    #from . import _build  # noqa: F401
     from .utils._show_versions import show_versions
-    
+
 #https://github.com/pandas-dev/pandas
 # Let users know if they're missing any of our hard dependencies
 _main_dependencies = ("numpy", "scipy", "sklearn", "matplotlib", 
@@ -90,20 +90,6 @@ with warnings.catch_warnings():
 from .datasets import ( 
     fetch_data, 
     ) 
-from .methods import ( 
-    Structural, 
-    Structures, 
-    MXS, 
-    )
-
-from .view import ( 
-    EvalPlot, 
-    plotLearningInspections, 
-    plotSilhouette,
-    plotDendrogram, 
-    plotProjection, 
-    )
-
 from .utils import ( 
     read_data,
     cleaner, 
@@ -115,31 +101,8 @@ from .utils import (
     make_MXS_labels, 
     predict_NGA_labels, 
     classify_k,  
-    plot_elbow, 
-    plot_clusters, 
-    plot_pca_components, 
-    plot_naive_dendrogram, 
-    plot_learning_curves, 
-    plot_confusion_matrices, 
-    plot_sbs_feature_selection, 
-    plot_regularization_path, 
-    plot_rf_feature_importances, 
     plot_logging, 
-    plot_silhouette, 
-    plot_profiling,
-    plot_confidence_in,
     )
-
-try : 
-    from .utils import ( 
-        selectfeatures, 
-        naive_imputer, 
-        naive_scaler,  
-        make_naive_pipe, 
-        bi_selector, 
-        )
-except ImportError :
-    pass 
 
 def setup_module(module):
     """Fixture for the tests to assure globally controllable seeding of RNGs"""
@@ -179,17 +142,7 @@ exploration projects. It allows to:
 __all__ = [ 
     "sklearn", 
     "fetch_data",
-    "Structural", 
-    "Structures", 
     "MXS", 
-    "EvalPlot", 
-    "plotLearningInspections", 
-    "plotSilhouette",
-    "plotDendrogram", 
-    "plotProjection", 
-    "plotAnomaly", 
-    "vesSelector", 
-    "erpSelector", 
     "read_data",
     "erpSmartDetector", 
     "plot_confidence_in", 
@@ -202,22 +155,7 @@ __all__ = [
     "predict_NGA_labels", 
     "classify_k",  
     "plot_elbow", 
-    "plot_clusters", 
-    "plot_pca_components", 
-    "plot_naive_dendrogram", 
-    "plot_learning_curves", 
-    "plot_confusion_matrices",  
-    "plot_sbs_feature_selection", 
-    "plot_regularization_path", 
-    "plot_rf_feature_importances", 
     "plot_logging", 
-    "plot_silhouette", 
-    "plot_profiling", 
-    "selectfeatures", 
-    "naive_imputer", 
-    "naive_scaler",  
-    "make_naive_pipe", 
-    "bi_selector", 
     "show_versions",
     "cleaner", 
     ]
